@@ -1,41 +1,62 @@
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
 
 public class Main {
-	static int N, V, start;
-	static int[][] adjArr;
-	static boolean[] visited;
-	static int cnt;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws NumberFormatException, IOException {
 
-		Scanner sc = new Scanner(System.in);
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-		N = sc.nextInt();
-		V = sc.nextInt();
+		int N = Integer.parseInt(br.readLine());
+		int K = Integer.parseInt(br.readLine());
 
-		adjArr = new int[N + 1][N + 1];
-		visited = new boolean[N + 1];
-		for (int i = 0; i < V; i++) {
-			int A = sc.nextInt();
-			int B = sc.nextInt();
-			adjArr[A][B] = adjArr[B][A] = 1;
+		int[][] adjMatrix = new int[N + 1][N + 1];
+
+		for (int i = 0; i < K; i++) {
+			StringTokenizer st = new StringTokenizer(br.readLine());
+			int a = Integer.parseInt(st.nextToken());
+			int b = Integer.parseInt(st.nextToken());
+			adjMatrix[a][b] = 1;
+			adjMatrix[b][a] = 1;
 		}
-		cnt = 0;
-		dfs(1);
 
-		System.out.println(cnt - 1);
+		boolean[] visited = new boolean[N + 1];
 
-	}
+		visited[1] = true;
 
-	static void dfs(int idx) {
-		cnt++;
-		visited[idx] = true;
-
+		List<Integer> list = new ArrayList<>();
+		list.add(1);
 		for (int i = 1; i <= N; i++) {
-			if (adjArr[idx][i] == 1 && !visited[i]) {
-				dfs(i);
+			if (adjMatrix[1][i] == 1) {
+				list.add(i);
+				visited[i] = true;
 			}
 		}
 
+		while (!list.isEmpty()) {
+			int tmp = list.remove(0);
+
+			for (int i = 1; i <= N; i++) {
+				if (adjMatrix[tmp][i] == 1 && !visited[i]) {
+					list.add(i);
+					visited[i] = true;
+				}
+			}
+
+		}
+		int ans = 0;
+		for (int i = 1; i <= N; i++) {
+			if (visited[i] == true)
+				ans++;
+
+		}
+
+		System.out.println(ans-1);
+
 	}
+
 }
