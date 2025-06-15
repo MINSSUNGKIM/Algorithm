@@ -5,53 +5,50 @@ import java.lang.*;
 public class Main{
   
     public static void main(String[] args) throws IOException {
-
-    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
+     
+      BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
       String input = br.readLine();
 
-      char[] isbn = new char[13];
-      int starIndex = -1;
+      int missingPosition = -1;
+      int currentSum = 0;
 
-      int checkSum = 0;
-      for(int i=0; i<13; i++){
-        
-        isbn[i] = input.charAt(i);
+      for (int i = 0; i < 13; i++) {
+          char digit = input.charAt(i);
 
-        if(isbn[i] == '*'){
-          starIndex = i;
-          continue;
-        }
+          if (digit == '*') {
+              missingPosition = i;
+              continue;
+          }
 
-        if(i%2 == 0){
-          checkSum += isbn[i] - '0';
+          int digitValue = digit - '0';
 
-        }
-
-        if(i%2 != 0){
-          checkSum += (isbn[i]-'0') *3;
-        }
-          
-        
+          if (i % 2 == 0) {
+              currentSum += digitValue;
+          } else {
+              currentSum += digitValue * 3;
+          }
       }
 
-      Map<Integer,Integer> map = new HashMap<>();
-      map.put(1,7);
-      map.put(2,4);
-      map.put(3,1);
-      map.put(4,8);
-      map.put(5,5);
-      map.put(6,2);
-      map.put(7,9);
-      map.put(8,6);
-      map.put(9,3);
-      map.put(0,0);
-      map.put(10,0);
-
-
-      System.out.println(starIndex%2 ==0 ? 10 - checkSum%10 : 
-                        (int)map.get(10-checkSum%10));
-
+      int missingDigit = calculateMissingDigit(currentSum, missingPosition);
+      System.out.println(missingDigit);
       
     }
+
+
+  private static int calculateMissingDigit(int currentSum, int position) {
+      int targetRemainder = (10 - (currentSum % 10)) % 10;
+
+      if (position % 2 == 0) {
+          return targetRemainder;
+      } else {
+          
+          for (int digit = 0; digit <= 9; digit++) {
+              if ((digit * 3) % 10 == targetRemainder) {
+                  return digit;
+              }
+          }
+      }
+
+      return -1;
+  }
 }
