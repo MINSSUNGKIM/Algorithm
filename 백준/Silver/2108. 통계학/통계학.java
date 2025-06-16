@@ -1,54 +1,89 @@
 import java.util.*;
 import java.io.*;
+import java.lang.*;
 
-public class Main {
-    
+public class Main{
+  
     public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        int N = Integer.parseInt(br.readLine());
+     
+      BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+      int N = Integer.parseInt(br.readLine());
+      int[] arr = new int[8001];
+      for(int i=0; i<N; i++){
+        int input = Integer.parseInt(br.readLine());
+        //-4000 ~ 4000 => 1 ~ 7999
+        arr[input+4000]++;
         
-        int[] numbers = new int[N];
-        for (int i = 0; i < N; i++) {
-            numbers[i] = Integer.parseInt(br.readLine());
+      }
+
+      int mean = 0;
+      int mid = 0;
+      int mode = 0;
+      int range = 0;
+      
+      int cnt =0;
+      int max = -1;
+
+      boolean isFirst = true;
+      int first = 0;
+      
+      for(int i=0; i<8001; i++){
+
+        // 등장하지 않은 값 pass
+        if(arr[i] ==0)
+          continue;
+
+
+        cnt += arr[i];
+        int val = i-4000;
+
+        //mean 구하기
+        mean += val * arr[i];
+
+        //mid 구하기
+        int prevCnt = cnt - arr[i];
+        if(prevCnt < (N+1)/2 && cnt >= (N+1)/2)
+            mid = val;
+
+        if(arr[i]>max){
+          max=arr[i];
+          mode = val;
+        }
+
+        if(isFirst){
+          first = val;
+          isFirst = false;
         }
         
-        // 정렬
-        Arrays.sort(numbers);
+        range = val;
+          
         
-        // 1. 산술평균
-        long sum = 0;
-        for (int num : numbers) {
-            sum += num;
+      }
+      int maxcnt = 0;
+      for(int i=0; i<8001; i++){
+        if(max == arr[i]){
+          maxcnt++;
+          if(maxcnt == 2)
+            mode = i-4000;
         }
-        int mean = (int) Math.round((double) sum / N);
-        
-        // 2. 중앙값 (N은 홀수)
-        int median = numbers[N / 2];
-        
-        // 3. 최빈값
-        Map<Integer, Integer> freqMap = new HashMap<>();
-        for (int num : numbers) {
-            freqMap.put(num, freqMap.getOrDefault(num, 0) + 1);
-        }
-        
-        int maxFreq = Collections.max(freqMap.values());
-        List<Integer> modes = new ArrayList<>();
-        for (Map.Entry<Integer, Integer> entry : freqMap.entrySet()) {
-            if (entry.getValue() == maxFreq) {
-                modes.add(entry.getKey());
-            }
-        }
-        Collections.sort(modes);
-        
-        int mode = modes.size() == 1 ? modes.get(0) : modes.get(1);
-        
-        // 4. 범위
-        int range = numbers[N - 1] - numbers[0];
-        
-        // 출력
-        System.out.println(mean);
-        System.out.println(median);
-        System.out.println(mode);
-        System.out.println(range);
+
+      }
+      
+
+      range -=first;
+
+      
+
+      
+      System.out.println(Math.round(mean * 1.0f/N));
+      System.out.println(mid);
+      System.out.println(mode);
+      System.out.println(range);
+      
+      
+      
     }
+
+
 }
